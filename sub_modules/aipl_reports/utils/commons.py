@@ -124,7 +124,7 @@ def get_aipl_automation_master():
 
 
 def get_aipl():
-    return pd.read_csv('https://docs.google.com/spreadsheets/d/1SXliYc5rGqJw3u1fR4BEMNMH9I8SnBdrmJII3CJ51Sw/export?format=csv&gid=732906079').set_index('division')
+    return pd.read_csv('https://docs.google.com/spreadsheets/d/1SXliYc5rGqJw3u1fR4BEMNMH9I8SnBdrmJII3CJ51Sw/export?format=csv&gid=732906079')
 
 
 
