@@ -1,6 +1,7 @@
 import datetime
 import streamlit as st
 
+from sub_modules import excel_splitter
 from sub_modules import investment_splitter
 from sub_modules.aipl_reports import automations
 def main_page():
@@ -9,7 +10,7 @@ def main_page():
 
     selected_report = st.selectbox(
         'Which Utility would you like to use?',
-        ('Investment Splitter', 'DCR Generator', 'Input Upload Converter'))
+        ('Investment Splitter', 'DCR Generator', 'Input Upload Converter', 'Excel Splitter'))
 
     st.write('You selected:', selected_report)
 
@@ -83,7 +84,55 @@ def main_page():
 
             st.write("DCR Table Sample")
             st.table(dcr_table.head(3))
-        
+
+# =========== EXCEL SPLITTER =============
+
+    if selected_report == 'Excel Splitter':
+        st.caption('Place the column to be split on as FIRST column.')
+        st.caption('Only select EXCEL file.')
+
+        with st.form("excel_splitter"):
+            st.write("🛠️ Wallace Data Processing Utility")
+            st.write("🛠️ Excel Splitter")
+
+            file_to_split =  st.file_uploader("Choose Excel File to split: ")
+
+            st.info("Press 'Submit' to proceed")
+            submitted = st.form_submit_button("Submit")
+
+        if submitted:
+            # if  not(investment_file.columns == ['Division', 'Mobile', 'Investment']):
+            #     st.error("Incorrent columns in file uploaded")
+            with st.spinner("Reading excel file: 5 mins..."):
+                to_split_df= excel_splitter.get_pd_df(file_to_split)
+                df_cols = tuple(excel_splitter.get_column_names(to_split_df))
+
+            st.write("Excel Table Sample")
+            st.table(to_split_df.head(3))
+
+
+            selected_column = st.selectbox(
+                label='Select column to split on?',
+                options=df_cols,
+                key='select-col-to-split-on' )
+
+
+            group_set_collection = excel_splitter.get_split_df_list(to_split_df, selected_column)
+            group = group_set_collection[0]
+            for group in group_set_collection:
+                ready_excel = excel_splitter.parse_df_to_excel_easy(group[1])
+                st.download_button(
+                label=f"Press to Download {group[0]} Table",
+                data=ready_excel, #group[1].to_csv(index=False).encode('utf-8'),
+                file_name=f"{investment_splitter.get_timestamp()}_{group[0]}_excel_splitter.xlsx",
+                # "text/csv",
+                key=f'{group[0]}-csv-download'
+                )
+                
+
+            # st.write("DCR Table Sample")
+            # st.table(dcr_table.head(3))
+
     if selected_report == 'Input Upload Converter':
         pass
 
