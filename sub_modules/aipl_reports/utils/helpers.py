@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 from . import commons
 
@@ -13,6 +14,10 @@ def get_report(reportName=None, fromDt:str=None, toDt:str=None, division_num:str
     forMon='4'
 
     '''
+    # forMon = datetime.datetime.strptime(fromDt, '%Y-%m-%d').month
+    forMon = fromDt.month
+    print(fromDt)
+
     if not(reportName):
         print("No report name entered")
         return None
@@ -46,7 +51,7 @@ def get_report(reportName=None, fromDt:str=None, toDt:str=None, division_num:str
             'designate1': f'{role}|{division_num}',
             'user': f'{user}|{role}',
             'hdnuser': '90|4',
-            'year': fromDt[:4]+'-'+toDt[2:4],
+            'year': str(fromDt)[:4]+'-'+str(toDt)[2:4],
             'action': 'CreateXLstpstatus',
             'query': 'true',
             'module': 'Reports',
@@ -78,7 +83,7 @@ def get_report(reportName=None, fromDt:str=None, toDt:str=None, division_num:str
             'user':  f'{user}|{role}',
             'hdnuser': '90|4',
             'month': forMon,
-            'year': fromDt[:4],
+            'year': str(fromDt)[:4],
             'action': 'CreateXLmtpstatusrep',
             'query': 'true',
             'module': 'Reports',

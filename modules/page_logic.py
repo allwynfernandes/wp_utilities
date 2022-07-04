@@ -10,7 +10,7 @@ def main_page():
 
     selected_report = st.selectbox(
         'Which Utility would you like to use?',
-        ('Investment Splitter', 'DCR Generator', 'Input Upload Converter', 'Excel Splitter'))
+        ('Investment Splitter', 'MyWallace Report Generator', 'Input Upload Converter', 'Excel Splitter'))
 
     st.write('You selected:', selected_report)
 
@@ -47,18 +47,24 @@ def main_page():
 
 
 
-    # ======== DCR GENERATOR ===============
-    if selected_report == 'DCR Generator':
+    # ======== MyWallace GENERATOR ===============
+    if selected_report == 'MyWallace Report Generator':
         with st.form("dcr_generator_fm"):
-            st.write("🛠️ Wallace Data Processing Utility")
+            st.write("🛠️ Wallace Data Processing Utility") 
             st.write("🛠️ DCR Generator")
 
+            selected_report = st.selectbox(
+                label='Select report to generate',
+                options=['dcr', 'stp', 'mtp'],
+                key='select-aipl-report' )
             fromDate = st.date_input(
                 "Enter Report From date",
                 datetime.date(2022, 6, 10))
             toDate = st.date_input(
                 "Enter Report From date",
                 datetime.date(2022, 6, 20))    
+
+
 
                 # Every form must have a submit button.
             st.info("Press 'Submit' to run the app")
@@ -68,21 +74,21 @@ def main_page():
             # if  not(investment_file.columns == ['Division', 'Mobile', 'Investment']):
             #     st.error("Incorrent columns in file uploaded")
             with st.spinner("Generating report: 5 mins..."):
-                dcr_table= automations.get_all_div_dcr_submission(fromDt=fromDate, toDt=toDate)
+                dcr_table= automations.get_report_general(reportName=selected_report, fromDt=fromDate, toDt=toDate)
 
 
             st.success('Done!') 
 
             st.download_button(
-            "Press to Download Investments Table",
+           f"Press to Download {selected_report} Table",
             dcr_table.to_csv(index=False).encode('utf-8'),
-            f"{investment_splitter.get_timestamp()}_combine_dcr.csv",
+            f"{investment_splitter.get_timestamp()}_combine_{selected_report}_{str(fromDate)}_TO_{str(toDate)}.csv",
             "text/csv",
             key='download-csv'
             )
             
 
-            st.write("DCR Table Sample")
+            st.write(f"{selected_report} Table Sample")
             st.table(dcr_table.head(3))
 
 # =========== EXCEL SPLITTER =============
