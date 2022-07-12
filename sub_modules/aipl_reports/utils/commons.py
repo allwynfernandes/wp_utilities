@@ -1,3 +1,5 @@
+import datetime
+import calendar
 import requests
 import pandas as pd
 def get_page():
@@ -128,7 +130,17 @@ def get_aipl():
 
 
 
-
+def get_default_dates(returnType='datetime', baseDate:str=None):
+    if not(baseDate):
+        baseDate = str(datetime.datetime.now().date())
+    baseDate = datetime.datetime.strptime(baseDate, "%Y-%m-%d")
+    fromDt = str(f"{baseDate.year}-{baseDate.month}-01")
+    lastDay = calendar.monthrange(baseDate.year, baseDate.month)[1]
+    toDt = str(f"{baseDate.year}-{baseDate.month}-{lastDay}")
+    if returnType=='str':
+        return fromDt, toDt
+    if returnType=='datetime':
+        return datetime.datetime.strptime(fromDt, '%Y-%m-%d'), datetime.datetime.strptime(toDt, '%Y-%m-%d')
 
 
 

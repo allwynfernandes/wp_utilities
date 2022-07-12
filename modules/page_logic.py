@@ -1,16 +1,21 @@
 import datetime
 import streamlit as st
 
+
 from sub_modules import excel_splitter
 from sub_modules import investment_splitter
 from sub_modules.aipl_reports import automations
+from sub_modules.aipl_reports.utils import commons
+
+
+
 def main_page():
 
     st.set_page_config(page_icon="🛠️", page_title="Wallace Data Processing Utility")
 
     selected_report = st.selectbox(
         'Which Utility would you like to use?',
-        ('Investment Splitter', 'MyWallace Report Generator', 'Input Upload Converter', 'Excel Splitter'))
+        ('Investment Splitter', 'MyWallace Report Generator', 'MyWallace Excel Generator', 'Input Upload Converter', 'Excel Splitter'))
 
     st.write('You selected:', selected_report)
 
@@ -59,10 +64,10 @@ def main_page():
                 key='select-aipl-report' )
             fromDate = st.date_input(
                 "Enter Report From date",
-                datetime.date(2022, 6, 10))
+                commons.get_default_dates('datetime')[0])
             toDate = st.date_input(
-                "Enter Report From date",
-                datetime.date(2022, 6, 20))    
+                "Enter Report To date",
+                commons.get_default_dates('datetime')[1])    
 
 
 
@@ -91,7 +96,60 @@ def main_page():
             st.write(f"{selected_report} Table Sample")
             st.table(dcr_table.head(3))
 
-# =========== EXCEL SPLITTER =============
+
+    # ======== MyWallace EXCEL  ===============
+    if selected_report == 'MyWallace Excel Generator':
+        with st.form("excel_generator_fm"):
+            st.write("🛠️ Wallace Data Processing Utility") 
+            st.write("🛠️ Excel Report Generator")
+
+            selected_report = st.selectbox(
+                label='Select excel report to generate',
+                options=['dcr_excel'],
+                key='select-aipl-excel-report' )
+            fromDate = st.date_input(
+                "Enter Report From date",
+                commons.get_default_dates('datetime')[0])
+            toDate = st.date_input(
+                "Enter Report To date",
+                commons.get_default_dates('datetime')[1])    
+
+
+
+                # Every form must have a submit button.
+            st.info("Press 'Submit' to run the app")
+            submitted = st.form_submit_button("Submit")
+
+        if submitted:
+            # if  not(investment_file.columns == ['Division', 'Mobile', 'Investment']):
+            #     st.error("Incorrent columns in file uploaded")
+            with st.spinner("Generating report: 5 mins..."):
+                data_table = automations.get_excel_general(excelName=selected_report, fromDt=fromDate, toDt=toDate)
+
+
+            st.success('Done!') 
+
+        #     st.download_button(
+        #    f"Press to Download {selected_report} Table",
+        #     data_table.to_csv(index=False).encode('utf-8'),
+        #     f"{investment_splitter.get_timestamp()}_combine_{selected_report}_{str(fromDate)}_TO_{str(toDate)}.csv",
+        #     "text/csv",
+        #     key='download-csv'
+        #     )
+        
+            st.download_button(
+            label=f"Press to Download {selected_report} Table",
+            data=data_table, #group[1].to_csv(index=False).encode('utf-8'),
+            file_name=f"{investment_splitter.get_timestamp()}_{selected_report}_report.xlsx",
+            # "text/csv",
+            key=f'{selected_report}-excel-download'
+            )
+            # st.write(f"{selected_report} Table Sample")
+            # st.table(data_table.head(3))
+
+            
+
+    # =========== EXCEL SPLITTER =============
 
     if selected_report == 'Excel Splitter':
         st.caption('Place the column to be split on as FIRST column.')

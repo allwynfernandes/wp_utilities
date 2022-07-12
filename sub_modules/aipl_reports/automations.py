@@ -34,7 +34,11 @@ def get_report_general(reportName,fromDt, toDt):
     return combine_df
     
 
+def get_excel_general(excelName, fromDt, toDt):
+    df = helpers.get_ready_report(excelName=excelName, fromDt=fromDt, toDt=toDt)
+    return df
 
+    
 def main():
     pass
 if __name__ == '__main__':
