@@ -15,15 +15,15 @@ def main_page():
 
     selected_report = st.selectbox(
         'Which Utility would you like to use?',
-        ('Investment Splitter', 'MyWallace Report Generator', 'MyWallace Excel Generator', 'Input Upload Converter', 'Excel Splitter'))
+        ('SAS Splitter', 'MyWallace Report Generator', 'MyWallace Excel Generator', 'Input Upload Converter', 'Excel Splitter'))
 
     st.write('You selected:', selected_report)
 
-    # ======== Investment Splitter ========
-    if selected_report == 'Investment Splitter':
-        with st.form("investment_splitter_fm"):
+    # ======== SAS Splitter ========
+    if selected_report == 'SAS Splitter':
+        with st.form("SAS_splitter_fm"):
             st.write("🛠️ Wallace Data Processing Utility")
-            investment_file =  st.file_uploader("Choose Investment Excel file: ")
+            investment_file =  st.file_uploader("Choose SAS Excel file: ")
 
                 # Every form must have a submit button.
             st.info("Press 'Submit' to run the app")
@@ -39,15 +39,15 @@ def main_page():
             st.success('Done!') 
 
             st.download_button(
-            "Press to Download Investments Table",
+            "Press to Download SAS Table",
             investment_table.to_csv(index=False).encode('utf-8'),
-            f"{investment_splitter.get_timestamp()}_investments.csv",
+            f"{investment_splitter.get_timestamp()}_SAS.csv",
             "text/csv",
             key='download-csv'
             )
             
 
-            st.write("Investment Table")
+            st.write("SAS Table")
             st.table(investment_table)
 
 
