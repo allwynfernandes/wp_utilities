@@ -68,7 +68,10 @@ def main_page():
             toDate = st.date_input(
                 "Enter Report To date",
                 commons.get_default_dates('datetime')[1])    
-
+            toEmail = st.text_input(
+                label="Send file to Email address (Only 1 email)", 
+                placeholder="name.surname@wallacepharma.net",
+                max_chars=50)   
 
 
                 # Every form must have a submit button.
@@ -79,14 +82,19 @@ def main_page():
             # if  not(investment_file.columns == ['Division', 'Mobile', 'Investment']):
             #     st.error("Incorrent columns in file uploaded")
             with st.spinner("Generating report: 5 mins..."):
-                dcr_table= automations.get_report_general(reportName=selected_report, fromDt=fromDate, toDt=toDate)
+                data_table= automations.get_report_general(reportName=selected_report, fromDt=fromDate, toDt=toDate)
+                
 
-
+            commons.send_mail_with_excel(
+                recipient_email=toEmail, 
+                subject=f"{selected_report} Excel Report", 
+                content="", excel_file_rb=commons.df_to_excel_rb(data_table), 
+                file_name=f"{selected_report}_{fromDate}_{toDate}_WP-UTIL_{investment_splitter.get_timestamp()}.xlsx")
             st.success('Done!') 
 
             st.download_button(
            f"Press to Download {selected_report} Table",
-            dcr_table.to_csv(index=False).encode('utf-8'),
+            data_table.to_csv(index=False).encode('utf-8'),
             f"{investment_splitter.get_timestamp()}_combine_{selected_report}_{str(fromDate)}_TO_{str(toDate)}.csv",
             "text/csv",
             key='download-csv'
@@ -94,7 +102,6 @@ def main_page():
             
 
             st.write(f"{selected_report} Table Sample")
-            st.table(dcr_table.head(3))
 
 
     # ======== MyWallace EXCEL  ===============
@@ -112,7 +119,11 @@ def main_page():
                 commons.get_default_dates('datetime')[0])
             toDate = st.date_input(
                 "Enter Report To date",
-                commons.get_default_dates('datetime')[1])    
+                commons.get_default_dates('datetime')[1]) 
+            toEmail = st.text_input(
+                label="Send file to Email address (Only 1 email)", 
+                placeholder="name.surname@wallacepharma.net",
+                max_chars=50)   
 
 
 
@@ -126,8 +137,13 @@ def main_page():
             with st.spinner("Generating report: 5 mins..."):
                 data_table = automations.get_excel_general(excelName=selected_report, fromDt=fromDate, toDt=toDate)
 
-
+            commons.send_mail_with_excel(
+                recipient_email=toEmail, 
+                subject="DCR Excel Summary Report", 
+                content="", excel_file_rb=data_table, 
+                file_name=f"{selected_report}_{fromDate}_{toDate}_WP-UTIL_{investment_splitter.get_timestamp()}.xlsx")
             st.success('Done!') 
+
 
         #     st.download_button(
         #    f"Press to Download {selected_report} Table",
@@ -145,7 +161,6 @@ def main_page():
             key=f'{selected_report}-excel-download'
             )
             # st.write(f"{selected_report} Table Sample")
-            # st.table(data_table.head(3))
 
             
 
